@@ -20,7 +20,7 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+# havaK <- read_excel(path)
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
