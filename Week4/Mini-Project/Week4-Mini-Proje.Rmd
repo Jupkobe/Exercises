@@ -1,6 +1,8 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 T.C. Çevre Şehircilik ve İklim Değişikliği bakanlığının ülke genelinde yaptığı hava kalitesi
@@ -18,25 +20,54 @@ Ham veriler ise [https://sim.csb.gov.tr/STN/STN_Report/StationDataDownloadNew](h
 - Aralık ayında doğduysanız Aralık 2023 verisi
 - Şubat ayında doğduysanız Şubat 2024 verisi
 
+Yaratacağınız data.frame nesnesinin sütun isimleri Excel'de bulunan değişken sütun isimlerini içermelidir. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
+
 ```{r}
 # Excel dosyasındaki ham verileri data.frame formatında R'a ithal edin
-# havaK <- <kodu tamamla>
+# havaK <- as.data.frame(read_excel("hava.xlsx"))
 ```
 
 ## Egzersiz 2 - Veri Kalite Kontrolü
 
-*havaK* adlı değişkendeki bütün verilerin **numric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
+### Zaman sütunu
+Zaman değerlerini içeren sütunun isminin **Time** olmasını sağlayın
+```{r}
+#  names(havaK) = c("Time", "PM10", "PM2.5", "SO2", "CO", "NO2",  "NOX", "NO")
+```
+
+
+*havaK$Time* adlı değişkendeki bütün verilerin **POSIXct** tipinde olmasını sağlayın. 
 
 ```{r}
-# havaK <- <kodu tamamla>
+# havaK$Time = sapply(havaK$Time, as.POSIXct)
+```
 
+*Time* sütunu dışındaki bütün sütunların tipinin **numeric** olmasını sağlayın. *havaK* nesnesinin ilk 10 satırının raporda gözükmesini sağlayın.
+
+```{r}
+# numeric çevirme için . ve , kurtulma işlemi
+havaK[, 2:8] = sapply(havaK[, 2:8], function(x) {
+  gsub("\\.", "", x)
+})
+havaK[, 2:8] = sapply(havaK[, 2:8], function(x) {
+  gsub(",", ".", x)
+})
+
+# numeric yapma işlemi
+havaK[, 2:8] = sapply(havaK[, 2:8], as.numeric)
+
+print(havaK, n=10)
 ```
 
 ## Egzersiz 3 - Veri Görselleme
+*dygraphs* paketini kullanarak veri setinizde bulunan iki farklı parametreyi aynı grafik üzerinde iki değişik aks kullanarak (bkz örnek) çizin.
 
-*havaK* adlı değişkendeki bütün verilerin **numric** tipte olmasını sağlayın. Eksik veriler NA olmalıdır.
+![](graphic_example.png "İki akslı grafik örneği")
+
 
 ```{r}
-# havaK <- <kodu tamamla>
-
+library(dygraphs)
+dygraph(data_subset, x = "Tarih") %>%
+  dySeries("PM10", label = "PM10") %>%
+  dySeries("PM2.5", label = "PM2.5")
 ```
